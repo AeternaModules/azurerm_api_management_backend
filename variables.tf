@@ -58,7 +58,7 @@ EOT
     resource_id         = optional(string)
     title               = optional(string)
     circuit_breaker_rule = optional(object({
-      accept_retry_after_enabled = optional(bool, false)
+      accept_retry_after_enabled = optional(bool) # Default: false
       failure_condition = object({
         count             = optional(number)
         error_reasons     = optional(list(string))
