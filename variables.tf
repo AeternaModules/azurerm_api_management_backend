@@ -33,7 +33,7 @@ Optional:
     - proxy (block):
         - password (optional)
         - url (required)
-        - username (required)
+        - username (optional)
     - service_fabric_cluster (block):
         - client_certificate_id (optional)
         - client_certificate_thumbprint (optional)
@@ -84,7 +84,7 @@ EOT
     proxy = optional(object({
       password = optional(string)
       url      = string
-      username = string
+      username = optional(string)
     }))
     service_fabric_cluster = optional(object({
       client_certificate_id            = optional(string)
@@ -110,5 +110,210 @@ EOT
     ])
     error_message = "Each status_code_range list must contain at most 10 items"
   }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.circuit_breaker_rule == null || (can(regex("^[a-zA-Z0-9]([a-zA-Z0-9-]{0,78}[a-zA-Z0-9])?$", v.circuit_breaker_rule.name)))
+      )
+    ])
+    error_message = "`name` must be between 1 and 80 characters in length and may contain only numbers, letters, and hyphens (-) sign when preceded and followed by number or a letter."
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.circuit_breaker_rule == null || (v.circuit_breaker_rule.failure_condition.count == null || (v.circuit_breaker_rule.failure_condition.count >= 1 && v.circuit_breaker_rule.failure_condition.count <= 10000))
+      )
+    ])
+    error_message = "must be between 1 and 10000"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.circuit_breaker_rule == null || (v.circuit_breaker_rule.failure_condition.percentage == null || (v.circuit_breaker_rule.failure_condition.percentage >= 1 && v.circuit_breaker_rule.failure_condition.percentage <= 100))
+      )
+    ])
+    error_message = "must be between 1 and 100"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.credentials == null || (v.credentials.authorization == null || (v.credentials.authorization.parameter == null || (length(v.credentials.authorization.parameter) > 0)))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.credentials == null || (v.credentials.authorization == null || (v.credentials.authorization.scheme == null || (length(v.credentials.authorization.scheme) > 0)))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.credentials == null || (v.credentials.certificate == null || (length(v.credentials.certificate) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.credentials == null || (v.credentials.header == null || (length(v.credentials.header) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.credentials == null || (v.credentials.query == null || (length(v.credentials.query) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.description == null || (length(v.description) >= 1 && length(v.description) <= 2000)
+      )
+    ])
+    error_message = "must be between 1 and 2000 characters"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.proxy == null || (v.proxy.password == null || (length(v.proxy.password) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.proxy == null || (length(v.proxy.url) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.proxy == null || (v.proxy.username == null || (length(v.proxy.username) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.resource_id == null || (length(v.resource_id) >= 1 && length(v.resource_id) <= 2000)
+      )
+    ])
+    error_message = "must be between 1 and 2000 characters"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.service_fabric_cluster == null || (v.service_fabric_cluster.client_certificate_thumbprint == null || (length(v.service_fabric_cluster.client_certificate_thumbprint) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.service_fabric_cluster == null || (length(v.service_fabric_cluster.management_endpoints) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.service_fabric_cluster == null || (v.service_fabric_cluster.server_certificate_thumbprints == null || (length(v.service_fabric_cluster.server_certificate_thumbprints) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.service_fabric_cluster == null || (v.service_fabric_cluster.server_x509_name == null || (length(v.service_fabric_cluster.server_x509_name.issuer_certificate_thumbprint) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.service_fabric_cluster == null || (v.service_fabric_cluster.server_x509_name == null || (length(v.service_fabric_cluster.server_x509_name.name) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        v.title == null || (length(v.title) >= 1 && length(v.title) <= 300)
+      )
+    ])
+    error_message = "must be between 1 and 300 characters"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.api_management_backends : (
+        length(v.url) > 0
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  # --- Unconfirmed validation candidates, derived from azurerm_api_management_backend's provider source ---
+  # Not auto-enabled: either a bespoke provider validator we can't safely translate,
+  # or a path that crosses a list-typed block (needs its own for_each wrapping).
+  # Review, translate into a real validation{} block above, and delete once confirmed.
+  # path: name
+  #   source:    [from validate.ApiManagementBackendName] !matched
+  # path: api_management_name
+  #   source:    [from validate.ApiManagementServiceName] !matched
+  # path: resource_group_name
+  #   condition: length(value) <= 90
+  #   message:   [from resourcegroups.ValidateName: invalid when len(value) > 90]
+  #   source:    [from resourcegroups.ValidateName: invalid when len(value) > 90]
+  # path: resource_group_name
+  #   condition: !endswith(value, ".")
+  #   message:   [from resourcegroups.ValidateName: must not end with "."]
+  #   source:    [from resourcegroups.ValidateName: must not end with "."]
+  # path: resource_group_name
+  #   condition: length(value) != 0
+  #   message:   [from resourcegroups.ValidateName: invalid when len(value) == 0]
+  #   source:    [from resourcegroups.ValidateName: invalid when len(value) == 0]
+  # path: resource_group_name
+  #   source:    [from resourcegroups.ValidateName] !matched
+  # path: circuit_breaker_rule.trip_duration
+  #   source:    [from azValidate.ISO8601Duration] !ok
+  # path: circuit_breaker_rule.trip_duration
+  #   source:    [from azValidate.ISO8601Duration] err != nil
+  # path: circuit_breaker_rule.failure_condition.interval_duration
+  #   source:    [from azValidate.ISO8601Duration] !ok
+  # path: circuit_breaker_rule.failure_condition.interval_duration
+  #   source:    [from azValidate.ISO8601Duration] err != nil
+  # path: circuit_breaker_rule.failure_condition.error_reasons[*]
+  #   condition: length(value) >= 1 && length(value) <= 200
+  #   message:   must be between 1 and 200 characters
+  # path: circuit_breaker_rule.failure_condition.status_code_range.min
+  #   condition: value >= 200 && value <= 599
+  #   message:   must be between 200 and 599
+  # path: circuit_breaker_rule.failure_condition.status_code_range.max
+  #   condition: value >= 200 && value <= 599
+  #   message:   must be between 200 and 599
+  # path: protocol
+  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: service_fabric_cluster.client_certificate_id
+  #   source:    [from validate.CertificateID] !ok
+  # path: service_fabric_cluster.client_certificate_id
+  #   source:    [from validate.CertificateID] err != nil
 }
 
