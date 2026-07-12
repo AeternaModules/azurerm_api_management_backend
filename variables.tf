@@ -105,7 +105,7 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.api_management_backends : (
-        v.circuit_breaker_rule.failure_condition.status_code_range == null || (length(v.circuit_breaker_rule.failure_condition.status_code_range) <= 10)
+        v.circuit_breaker_rule == null || (v.circuit_breaker_rule.failure_condition.status_code_range == null || (length(v.circuit_breaker_rule.failure_condition.status_code_range) <= 10))
       )
     ])
     error_message = "Each status_code_range list must contain at most 10 items"
