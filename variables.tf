@@ -92,10 +92,10 @@ EOT
       management_endpoints             = set(string)
       max_partition_resolution_retries = number
       server_certificate_thumbprints   = optional(set(string))
-      server_x509_name = optional(object({
+      server_x509_name = optional(list(object({
         issuer_certificate_thumbprint = string
         name                          = string
-      }))
+      })))
     }))
     tls = optional(object({
       validate_certificate_chain = optional(bool)
@@ -109,166 +109,6 @@ EOT
       )
     ])
     error_message = "Each status_code_range list must contain at most 10 items"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.circuit_breaker_rule == null || (can(regex("^[a-zA-Z0-9]([a-zA-Z0-9-]{0,78}[a-zA-Z0-9])?$", v.circuit_breaker_rule.name)))
-      )
-    ])
-    error_message = "`name` must be between 1 and 80 characters in length and may contain only numbers, letters, and hyphens (-) sign when preceded and followed by number or a letter."
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.circuit_breaker_rule == null || (v.circuit_breaker_rule.failure_condition.count == null || (v.circuit_breaker_rule.failure_condition.count >= 1 && v.circuit_breaker_rule.failure_condition.count <= 10000))
-      )
-    ])
-    error_message = "must be between 1 and 10000"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.circuit_breaker_rule == null || (v.circuit_breaker_rule.failure_condition.percentage == null || (v.circuit_breaker_rule.failure_condition.percentage >= 1 && v.circuit_breaker_rule.failure_condition.percentage <= 100))
-      )
-    ])
-    error_message = "must be between 1 and 100"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.credentials == null || (v.credentials.authorization == null || (v.credentials.authorization.parameter == null || (length(v.credentials.authorization.parameter) > 0)))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.credentials == null || (v.credentials.authorization == null || (v.credentials.authorization.scheme == null || (length(v.credentials.authorization.scheme) > 0)))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.credentials == null || (v.credentials.certificate == null || (length(v.credentials.certificate) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.credentials == null || (v.credentials.header == null || (length(v.credentials.header) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.credentials == null || (v.credentials.query == null || (length(v.credentials.query) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.description == null || (length(v.description) >= 1 && length(v.description) <= 2000)
-      )
-    ])
-    error_message = "must be between 1 and 2000 characters"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.proxy == null || (v.proxy.password == null || (length(v.proxy.password) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.proxy == null || (length(v.proxy.url) > 0)
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.proxy == null || (v.proxy.username == null || (length(v.proxy.username) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.resource_id == null || (length(v.resource_id) >= 1 && length(v.resource_id) <= 2000)
-      )
-    ])
-    error_message = "must be between 1 and 2000 characters"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.service_fabric_cluster == null || (v.service_fabric_cluster.client_certificate_thumbprint == null || (length(v.service_fabric_cluster.client_certificate_thumbprint) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.service_fabric_cluster == null || (length(v.service_fabric_cluster.management_endpoints) > 0)
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.service_fabric_cluster == null || (v.service_fabric_cluster.server_certificate_thumbprints == null || (length(v.service_fabric_cluster.server_certificate_thumbprints) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.service_fabric_cluster == null || (v.service_fabric_cluster.server_x509_name == null || (length(v.service_fabric_cluster.server_x509_name.issuer_certificate_thumbprint) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.service_fabric_cluster == null || (v.service_fabric_cluster.server_x509_name == null || (length(v.service_fabric_cluster.server_x509_name.name) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        v.title == null || (length(v.title) >= 1 && length(v.title) <= 300)
-      )
-    ])
-    error_message = "must be between 1 and 300 characters"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_backends : (
-        length(v.url) > 0
-      )
-    ])
-    error_message = "must not be empty"
   }
   # --- Unconfirmed validation candidates, derived from azurerm_api_management_backend's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
@@ -292,6 +132,9 @@ EOT
   #   source:    [from resourcegroups.ValidateName: invalid when len(value) == 0]
   # path: resource_group_name
   #   source:    [from resourcegroups.ValidateName] !matched
+  # path: circuit_breaker_rule.name
+  #   condition: can(regex("^[a-zA-Z0-9]([a-zA-Z0-9-]{0,78}[a-zA-Z0-9])?$", value))
+  #   message:   `name` must be between 1 and 80 characters in length and may contain only numbers, letters, and hyphens (-) sign when preceded and followed by number or a letter.
   # path: circuit_breaker_rule.trip_duration
   #   source:    [from azValidate.ISO8601Duration] !ok
   # path: circuit_breaker_rule.trip_duration
@@ -300,20 +143,77 @@ EOT
   #   source:    [from azValidate.ISO8601Duration] !ok
   # path: circuit_breaker_rule.failure_condition.interval_duration
   #   source:    [from azValidate.ISO8601Duration] err != nil
+  # path: circuit_breaker_rule.failure_condition.count
+  #   condition: value >= 1 && value <= 10000
+  #   message:   must be between 1 and 10000
   # path: circuit_breaker_rule.failure_condition.error_reasons[*]
   #   condition: length(value) >= 1 && length(value) <= 200
   #   message:   must be between 1 and 200 characters
+  # path: circuit_breaker_rule.failure_condition.percentage
+  #   condition: value >= 1 && value <= 100
+  #   message:   must be between 1 and 100
   # path: circuit_breaker_rule.failure_condition.status_code_range.min
   #   condition: value >= 200 && value <= 599
   #   message:   must be between 200 and 599
   # path: circuit_breaker_rule.failure_condition.status_code_range.max
   #   condition: value >= 200 && value <= 599
   #   message:   must be between 200 and 599
+  # path: credentials.authorization.parameter
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: credentials.authorization.scheme
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: credentials.certificate[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: credentials.header[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: credentials.query[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: description
+  #   condition: length(value) >= 1 && length(value) <= 2000
+  #   message:   must be between 1 and 2000 characters
   # path: protocol
   #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: proxy.password
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: proxy.url
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: proxy.username
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: resource_id
+  #   condition: length(value) >= 1 && length(value) <= 2000
+  #   message:   must be between 1 and 2000 characters
   # path: service_fabric_cluster.client_certificate_id
   #   source:    [from validate.CertificateID] !ok
   # path: service_fabric_cluster.client_certificate_id
   #   source:    [from validate.CertificateID] err != nil
+  # path: service_fabric_cluster.client_certificate_thumbprint
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: service_fabric_cluster.management_endpoints[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: service_fabric_cluster.server_certificate_thumbprints[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: service_fabric_cluster.server_x509_name.issuer_certificate_thumbprint
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: service_fabric_cluster.server_x509_name.name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: title
+  #   condition: length(value) >= 1 && length(value) <= 300
+  #   message:   must be between 1 and 300 characters
+  # path: url
+  #   condition: length(value) > 0
+  #   message:   must not be empty
 }
 

@@ -66,7 +66,7 @@ resource "azurerm_api_management_backend" "api_management_backends" {
       max_partition_resolution_retries = service_fabric_cluster.value.max_partition_resolution_retries
       server_certificate_thumbprints   = service_fabric_cluster.value.server_certificate_thumbprints
       dynamic "server_x509_name" {
-        for_each = service_fabric_cluster.value.server_x509_name != null ? [service_fabric_cluster.value.server_x509_name] : []
+        for_each = service_fabric_cluster.value.server_x509_name != null ? service_fabric_cluster.value.server_x509_name : []
         content {
           issuer_certificate_thumbprint = server_x509_name.value.issuer_certificate_thumbprint
           name                          = server_x509_name.value.name
