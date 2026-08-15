@@ -8,11 +8,11 @@ output "api_management_backends_api_management_name" {
 }
 output "api_management_backends_circuit_breaker_rule" {
   description = "Map of circuit_breaker_rule values across all api_management_backends, keyed the same as var.api_management_backends"
-  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => v.circuit_breaker_rule if v.circuit_breaker_rule != null && length(v.circuit_breaker_rule) > 0 }
+  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => one(v.circuit_breaker_rule) if v.circuit_breaker_rule != null && length(v.circuit_breaker_rule) > 0 }
 }
 output "api_management_backends_credentials" {
   description = "Map of credentials values across all api_management_backends, keyed the same as var.api_management_backends"
-  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => v.credentials if v.credentials != null && length(v.credentials) > 0 }
+  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => one(v.credentials) if v.credentials != null && length(v.credentials) > 0 }
 }
 output "api_management_backends_description" {
   description = "Map of description values across all api_management_backends, keyed the same as var.api_management_backends"
@@ -28,7 +28,7 @@ output "api_management_backends_protocol" {
 }
 output "api_management_backends_proxy" {
   description = "Map of proxy values across all api_management_backends, keyed the same as var.api_management_backends"
-  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => v.proxy if v.proxy != null && length(v.proxy) > 0 }
+  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => one(v.proxy) if v.proxy != null && length(v.proxy) > 0 }
   sensitive   = true
 }
 output "api_management_backends_resource_group_name" {
@@ -41,7 +41,7 @@ output "api_management_backends_resource_id" {
 }
 output "api_management_backends_service_fabric_cluster" {
   description = "Map of service_fabric_cluster values across all api_management_backends, keyed the same as var.api_management_backends"
-  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => v.service_fabric_cluster if v.service_fabric_cluster != null && length(v.service_fabric_cluster) > 0 }
+  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => one(v.service_fabric_cluster) if v.service_fabric_cluster != null && length(v.service_fabric_cluster) > 0 }
 }
 output "api_management_backends_title" {
   description = "Map of title values across all api_management_backends, keyed the same as var.api_management_backends"
@@ -49,7 +49,7 @@ output "api_management_backends_title" {
 }
 output "api_management_backends_tls" {
   description = "Map of tls values across all api_management_backends, keyed the same as var.api_management_backends"
-  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => v.tls if v.tls != null && length(v.tls) > 0 }
+  value       = { for k, v in azurerm_api_management_backend.api_management_backends : k => one(v.tls) if v.tls != null && length(v.tls) > 0 }
 }
 output "api_management_backends_url" {
   description = "Map of url values across all api_management_backends, keyed the same as var.api_management_backends"
